@@ -18,8 +18,8 @@ class HermesWebui < Formula
   end
 
   post_install_steps do
-    (var/"lib/hermes-webui").mkpath
-    (var/"log/hermes-webui").mkpath
+    mkdir_p var/"lib/hermes-webui"
+    mkdir_p var/"log/hermes-webui"
   end
 
   service do
