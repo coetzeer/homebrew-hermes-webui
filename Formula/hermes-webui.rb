@@ -1,5 +1,5 @@
 class HermesWebui < Formula
-  desc "Hermes WebUI — lightweight, dark-themed web interface for Hermes Agent"
+  desc "Lightweight, dark-themed web interface for Hermes Agent"
   homepage "https://github.com/nesquena/hermes-webui"
   url "https://github.com/nesquena/hermes-webui/archive/refs/tags/exp-v0.52.264.tar.gz"
   sha256 "b6f89476986da87182b69a30d319db39d3c85679b392c2bca73a8ffe8fd5941b"
@@ -17,8 +17,7 @@ class HermesWebui < Formula
     # Homebrew's std_pip_args handles the linking automatically
   end
 
-  def post_install
-    # Ensure the state directory exists for first-run
+  post_install_steps do
     (var/"lib/hermes-webui").mkpath
     (var/"log/hermes-webui").mkpath
   end
@@ -32,6 +31,6 @@ class HermesWebui < Formula
 
   test do
     # Test that the console script is available and shows version
-    assert_match "hermes-webui", shell_output("#{bin}/hermes-webui --help 2>&1", 0)
+    assert_match "hermes-webui", shell_output("#{bin}/hermes-webui --help 2>&1")
   end
 end
