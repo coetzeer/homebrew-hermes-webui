@@ -17,10 +17,12 @@ class HermesWebui < Formula
     # Homebrew's std_pip_args handles the linking automatically
   end
 
+  # rubocop:disable FormulaAudit/InstallSteps
   def post_install
     mkdir_p var/"lib/hermes-webui"
     mkdir_p var/"log/hermes-webui"
   end
+  # rubocop:enable FormulaAudit/InstallSteps
 
   service do
     run [opt_bin/"hermes-webui", "serve", "--port", "8787"]
