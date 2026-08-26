@@ -17,7 +17,7 @@ class HermesWebui < Formula
     # Homebrew's std_pip_args handles the linking automatically
   end
 
-  post_install_steps do
+  def post_install
     (var/"lib/hermes-webui").mkpath
     (var/"log/hermes-webui").mkpath
   end
