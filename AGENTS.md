@@ -12,7 +12,7 @@ brew install coetzeer/hermes-webui/hermes-webui
 
 ## Repository structure
 
-```
+```text
 Formula/
   hermes-webui.rb       # Single formula definition
 .github/
