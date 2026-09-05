@@ -47,4 +47,63 @@ class HermesWebui < Formula
       and the node/python binaries in System Settings > Privacy & Security.
     EOS
   end
+
+  def post_install
+    service_name = "homebrew.#{name}"
+
+    if OS.linux?
+      service_file = Pathname.new(Dir.home)/".config"/"systemd"/"user"/"#{service_name}.service"
+      expected_working_dir = var/"hermes-webui"
+      expected_path = std_service_path_env
+
+      if service_file.exist?
+        content = service_file.read
+        issues = []
+
+        unless content.include?("WorkingDirectory=#{expected_working_dir}")
+          issues << "WorkingDirectory mismatch (expected: #{expected_working_dir})"
+        end
+
+        unless content.include?("Environment=PATH=#{expected_path}")
+          issues << "Environment=PATH mismatch (expected: #{expected_path})"
+        end
+
+        if issues.empty?
+          ohai "Service file #{service_file} validates successfully"
+        else
+          opoo "Service file #{service_file} has issues:\n  #{issues.join("\n  ")}"
+        end
+      else
+        ohai "Service file #{service_file} not found — it will be generated on first `brew services start #{name}`"
+      end
+    elsif OS.mac?
+      plist_file = Pathname.new(Dir.home)/"Library"/"LaunchAgents"/"#{service_name}.plist"
+      expected_working_dir = var/"hermes-webui"
+      expected_path = std_service_path_env
+
+      if plist_file.exist?
+        content = plist_file.read
+        issues = []
+
+        unless content.include?("<key>EnvironmentVariables</key>") &&
+               content.include?("<key>PATH</key>") &&
+               content.include?("<string>#{expected_path}</string>")
+          issues << "EnvironmentVariables/PATH missing or incorrect (expected: #{expected_path})"
+        end
+
+        unless content.include?("<key>WorkingDirectory</key>") &&
+               content.include?("<string>#{expected_working_dir}</string>")
+          issues << "WorkingDirectory missing or incorrect (expected: #{expected_working_dir})"
+        end
+
+        if issues.empty?
+          ohai "LaunchAgent plist #{plist_file} validates successfully"
+        else
+          opoo "LaunchAgent plist #{plist_file} has issues:\n  #{issues.join("\n  ")}"
+        end
+      else
+        ohai "LaunchAgent plist #{plist_file} not found — it will be generated on first `brew services start #{name}`"
+      end
+    end
+  end
 end
